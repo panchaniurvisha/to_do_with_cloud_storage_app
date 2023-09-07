@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "432255514726",
+    "project_id": "todowithcloudstorage",
+    "storage_bucket": "todowithcloudstorage.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432255514726:android:631fead9d06bdb3f5e55a7",
+        "android_client_info": {
+          "package_name": "com.example.to_do_with_cloud_storage_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "432255514726-5s5kbjb7mg65t9klatjungvm4van5b1g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0i4tXFSBxTi5tUC8RfvlrhBlPcHDnze8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432255514726-5s5kbjb7mg65t9klatjungvm4van5b1g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
