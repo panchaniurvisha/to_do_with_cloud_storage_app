@@ -43,7 +43,7 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             return ListView.separated(
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
               separatorBuilder: (context, index) => SizedBox(
                 height: height(context) / 40,
@@ -53,14 +53,55 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
               itemBuilder: (context, index) {
                 Map<String, dynamic> data =
                     snapshot.data!.docs[index].data() as Map<String, dynamic>;
-
+                DocumentSnapshot taskSnapshot = snapshot.data!.docs[index];
                 return ListTile(
                   title: Text(data["task"]),
-                  trailing: Text(data["description"]),
-                  subtitle: Text(data["addTaskTag"]),
+                  trailing: PopupMenuButton<int>(
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 1,
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit),
+                            SizedBox(width: 10),
+                            Text("Edit")
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                          value: 65,
+                          child: const Row(
+                            children: [
+                              Icon(Icons.delete),
+                              SizedBox(width: 10),
+                              Text("Delete")
+                            ],
+                          ),
+                          onTap: () => setState(() {
+                                deleteUser(taskSnapshot.id);
+                              })),
+                    ],
+                    offset: const Offset(100, 40),
+                    color: Colors.grey,
+                    elevation: 10,
+                    onSelected: (value) {
+                      if (value == 1) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddEditTaskScreen(
+                                    index: index,
+                                    taskData: data))).then((value) {
+                          setState(() {});
+                        });
+                      }
+                      debugPrint(value.toString());
+                    },
+                  ),
+                  subtitle: Text(data["addTaskTag"] + "" + data["description"]),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(width(context) / 20),
-                      side: BorderSide(color: Colors.black)),
+                      side: const BorderSide(color: Colors.black)),
                 );
               },
             );
@@ -87,5 +128,14 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
               ),
               label: "")
         ]));
+  }
+
+  editData() {}
+  Future<void> deleteUser(String taskId) {
+    return users
+        .doc(taskId)
+        .delete()
+        .then((value) => debugPrint("User Deleted"))
+        .catchError((error) => debugPrint("Failed to delete user: $error"));
   }
 }

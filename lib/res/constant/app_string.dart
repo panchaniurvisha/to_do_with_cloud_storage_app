@@ -6,4 +6,6 @@ class AppString {
   static const task = "Task";
   static const description = "Description";
   static const taskTag = "Add a task tag";
+  static const addToDo = "Add To-do";
+  static const editToDo = "Edit To-Do";
 }

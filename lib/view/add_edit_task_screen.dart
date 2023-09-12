@@ -6,7 +6,10 @@ import 'package:to_do_with_cloud_storage_app/res/common/media_query.dart';
 import 'package:to_do_with_cloud_storage_app/res/constant/app_string.dart';
 
 class AddEditTaskScreen extends StatefulWidget {
-  const AddEditTaskScreen({super.key});
+  final int? index;
+  final Map<String, dynamic>? taskData;
+
+  const AddEditTaskScreen({super.key, this.index, this.taskData});
 
   @override
   State<AddEditTaskScreen> createState() => _AddEditTaskScreenState();
@@ -18,6 +21,17 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   TextEditingController taskTagController = TextEditingController();
 
   FirebaseFirestore firebaseFireStore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (widget.taskData != null && widget.index != null) {
+      taskNameController.text = widget.taskData!["task"] ?? "";
+      descriptionController.text = widget.taskData!["description"] ?? "";
+      taskTagController.text = widget.taskData!["addTaskTag"] ?? "";
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +71,20 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                       child: const Text(AppString.cancel)),
                   ElevatedButton(
                       onPressed: () {
-                        createUserData();
+                        if (widget.index != null) {
+                          debugPrint("------------------>${widget.index}");
+
+                          // editData();
+                        } else {
+                          createUserData();
+                        }
                       },
                       style: const ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(Colors.red),
                       ),
-                      child: const Text(AppString.save))
+                      child: Text(widget.index == null
+                          ? AppString.addToDo
+                          : AppString.editToDo))
                 ],
               ),
             ],
@@ -82,4 +104,48 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
         .catchError((error) => debugPrint("Failed to add user: $error"));
     Navigator.pop(context);
   }
+
+  /*editData() {
+    final task = taskNameController.text;
+    final description = descriptionController.text;
+    final addTaskTag = taskTagController.text;
+    if (widget.taskData!.isEmpty || widget.index == null) {
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("Task data is missing or invalid."),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+    final taskData = {
+      "task": task,
+      "description": description,
+      "addTaskTag": addTaskTag,
+    };
+    final documentId = widget.taskData!["documentId"];
+    if (documentId != null) {
+      FirebaseFirestore.instance
+          .collection("tasks")
+          .doc(documentId)
+          .update(taskData)
+          .then((value) {
+        // Update successful
+        debugPrint("User updated");
+        Navigator.pop(context);
+      }).catchError((error) {
+        debugPrint("Failed to update task: $error");
+      });
+    } else {}
+  }*/
 }
