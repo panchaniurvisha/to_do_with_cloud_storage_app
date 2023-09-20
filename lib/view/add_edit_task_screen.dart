@@ -7,9 +7,10 @@ import 'package:to_do_with_cloud_storage_app/res/constant/app_string.dart';
 
 class AddEditTaskScreen extends StatefulWidget {
   final int? index;
+  final String? id;
   final Map<String, dynamic>? taskData;
 
-  const AddEditTaskScreen({super.key, this.index, this.taskData});
+  const AddEditTaskScreen({super.key, this.index, this.taskData, this.id});
 
   @override
   State<AddEditTaskScreen> createState() => _AddEditTaskScreenState();
@@ -72,9 +73,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                   ElevatedButton(
                       onPressed: () {
                         if (widget.index != null) {
-                          debugPrint("------------------>${widget.index}");
-
-                          // editData();
+                          editData();
                         } else {
                           createUserData();
                         }
@@ -100,52 +99,28 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
           "description": descriptionController.text,
           "addTaskTag": taskTagController.text,
         })
-        .then((value) => debugPrint("User Added---->${value.get()}"))
-        .catchError((error) => debugPrint("Failed to add user: $error"));
+        .then(
+          (value) => debugPrint("User Added---->${value.get()}"),
+        )
+        .catchError(
+          (error) => debugPrint("Failed to add user: $error"),
+        );
     Navigator.pop(context);
   }
 
-  /*editData() {
-    final task = taskNameController.text;
-    final description = descriptionController.text;
-    final addTaskTag = taskTagController.text;
-    if (widget.taskData!.isEmpty || widget.index == null) {
-      return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Error"),
-            content: Text("Task data is missing or invalid."),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-                child: Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-    }
-    final taskData = {
-      "task": task,
-      "description": description,
-      "addTaskTag": addTaskTag,
-    };
-    final documentId = widget.taskData!["documentId"];
-    if (documentId != null) {
-      FirebaseFirestore.instance
-          .collection("tasks")
-          .doc(documentId)
-          .update(taskData)
-          .then((value) {
-        // Update successful
-        debugPrint("User updated");
+  editData() {
+    if (widget.id != null) {
+      CollectionReference users = firebaseFireStore.collection("tasks");
+
+      users.doc(widget.id).update({
+        "task": taskNameController.text,
+        "description": descriptionController.text,
+        "addTaskTag": taskTagController.text,
+      }).then((value) {
         Navigator.pop(context);
       }).catchError((error) {
         debugPrint("Failed to update task: $error");
       });
-    } else {}
-  }*/
+    }
+  }
 }
